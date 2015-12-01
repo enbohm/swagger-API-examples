@@ -1,2 +1,2 @@
 # swagger-API-examples
-Contains examples how to document your APIs using Swagger (swagger.io)
+Contains examples how to document your APIs using Swagger (swagger.io). To run this you will need Java 8 and Maven 3. When installen, typ 'mvn clean install' in your project base directory. Maven will create a war-file which can be deployed on any Java EE 7 application server (or using any micro container such as Payara or WildFly Swarm). The API-description (swagger definition) will be in localhost:<port>/contextroot/swagger.json. If you will deploy this on Glassfish/Payara, the url will be http://localhost8080/swagger.json. This articfact can be 'pasted' into http://petstore.swagger.io/ to see the outcome of the API description.
