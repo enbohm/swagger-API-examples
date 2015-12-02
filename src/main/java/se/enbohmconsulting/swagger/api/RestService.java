@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.ejb.Singleton;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -20,10 +21,9 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 /**
- * Represents a dummy service (singleton) which contains three methods, findAll,
- * find(user) and add(user). Swagger (<a href="swagger.io">Swagger</a>) is used
- * as framework for documenting this API which is based on Jave EE 7 (Jax-RS +
- * EJB).
+ * Represents a dummy service (singleton) which contains basic CRUD operations.
+ * Swagger (<a href="swagger.io">Swagger</a>) is used as framework for
+ * documenting this API which is based on Jave EE 7 (Jax-RS + EJB).
  * 
  * <p>
  * This API is found on path {@code /contextroot/api}. If you are using
@@ -35,7 +35,7 @@ import io.swagger.annotations.ApiResponses;
  */
 @Singleton
 @Path("/api")
-@Api(value = "api")
+@Api(value = "A simple example of using Swagger to document your API.", protocols = "http")
 public class RestService {
 
 	private List<String> users = new ArrayList<>();
@@ -43,15 +43,15 @@ public class RestService {
 	@GET
 	@Path("/findall")
 	@Produces(MediaType.TEXT_PLAIN)
-	@ApiOperation(value = "Returns the number of added users", notes = "This lists the number of users", response = Response.class)
+	@ApiOperation(value = "Returns the number of added users", notes = "This lists the number of users in-memory storage.", response = Response.class)
 	public Response findAll() {
 		return Response.status(200).entity("Total users = " + users.size()).build();
 	}
 
-	@POST
+	@PUT
 	@Path("/add/{user}")
 	@Produces(MediaType.TEXT_PLAIN)
-	@ApiOperation(value = "Adds (saves) a user to local storage", notes = "This adds a user into memory storage", response = Response.class)
+	@ApiOperation(value = "Creates a new user to local storage", notes = "This adds a new user into the in-memory storage.", response = Response.class)
 	@ApiResponses(value = { @ApiResponse(code = 201, message = "User added") })
 	public Response add(@ApiParam(value = "user to add", required = true) @PathParam("user") String user) {
 		this.users.add(user);
@@ -61,12 +61,25 @@ public class RestService {
 	@GET
 	@Path("/find/{user}")
 	@Produces(MediaType.TEXT_PLAIN)
-	@ApiOperation(value = "Finds a user by its name", notes = "This method find a user in the menory storage", response = Response.class)
+	@ApiOperation(value = "Finds a user by its name", notes = "This method find a user in the in-menory storage.", response = Response.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "User found"),
 			@ApiResponse(code = 404, message = "User not found") })
 	public Response find(@ApiParam(value = "user to find", required = true) @PathParam("user") String user) {
 		Optional<String> foundUser = this.users.stream().filter(u -> u.equals(user)).findAny();
 		return foundUser.isPresent() ? Response.status(200).entity("User " + foundUser.get() + " was found!").build()
+				: Response.status(404).entity("User " + user + " not found").build();
+	}
+
+	@DELETE
+	@Path("/delete/{user}")
+	@Produces(MediaType.TEXT_PLAIN)
+	@ApiOperation(value = "Delete a user by its name", notes = "This method removes a user from the in-memory storage.", response = Response.class)
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "User was removed"),
+			@ApiResponse(code = 404, message = "User not found") })
+	public Response delete(@ApiParam(value = "user to delete", required = true) @PathParam("user") String user) {
+		Optional<String> foundUser = this.users.stream().filter(u -> u.equals(user)).findAny();
+		return this.users.remove(user)
+				? Response.status(200).entity("User " + foundUser.get() + " was removed!").build()
 				: Response.status(404).entity("User " + user + " not found").build();
 	}
 }
