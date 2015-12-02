@@ -61,7 +61,7 @@ public class RestService {
 	@GET
 	@Path("/find/{user}")
 	@Produces(MediaType.TEXT_PLAIN)
-	@ApiOperation(value = "Finds a user by its name", notes = "This method find a user in the in-menory storage.", response = Response.class)
+	@ApiOperation(value = "Finds a user by its name", notes = "This method find a user in the in-memory storage.", response = Response.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "User found"),
 			@ApiResponse(code = 404, message = "User not found") })
 	public Response find(@ApiParam(value = "user to find", required = true) @PathParam("user") String user) {
